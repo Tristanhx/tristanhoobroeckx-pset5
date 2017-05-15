@@ -20,7 +20,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     private static final String KEY_ID = "_id";
     private static final String KEY_ITEM = "item";
     private static final String DONE = "done";
-    private static final String TABLE = "todoTable";
+    private static final String TABLE = "";
 
     public DataBaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -52,10 +52,10 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         db.close();
     }
 
-    public ArrayList<ITEM> Read(){
+    public ArrayList<ITEM> Read(String table){
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<ITEM> items = new ArrayList<>();
-        String query = "SELECT " + KEY_ID + ", " + KEY_ITEM + ", " + DONE + " FROM " + TABLE;
+        String query = "SELECT " + KEY_ID + ", " + KEY_ITEM + ", " + DONE + " FROM " + table;
         Cursor cursor =  db.rawQuery(query, null);
 
         if (cursor.moveToFirst()){

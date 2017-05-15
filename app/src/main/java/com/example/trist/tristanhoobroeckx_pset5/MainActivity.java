@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> imageList;
     ITEM item;
     EditText editText;
-    ListView listView;
+    ListView tableListView;
     ListView detailList;
     ArrayList<ITEM> itemList;
 
@@ -47,19 +47,19 @@ public class MainActivity extends AppCompatActivity {
             Log.d("list!", "List is not empty!");
         }
         editText = (EditText) findViewById(R.id.edittxt);
-        listView = (ListView) findViewById(R.id.list);
+        tableListView = (ListView) findViewById(R.id.list);
         detailList = (ListView) findViewById(R.id.detailslist);
 
 
 
-        setList();
+        setDetailList();
 
 
 
 
 
-        listView.setOnItemClickListener(new ShortClick());
-        listView.setOnItemLongClickListener(new LongClick());
+        tableListView.setOnItemClickListener(new ShortClick());
+        tableListView.setOnItemLongClickListener(new LongClick());
 
 
 
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             item = new ITEM("TODO: "+content, "false");
             helper.Create(item);
             editText.getText().clear();
-            setList();
+            setDetailList();
         }
         else{
             Toast.makeText(this, "What did you need to do?", Toast.LENGTH_SHORT).show();
@@ -91,7 +91,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setList(){
+    public void setTableList(){
+
+    }
+
+    public void setDetailList(){
         itemList = helper.Read();
         Log.d("list!", Integer.toString(itemList.size()));
         for (ITEM items : itemList){
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             assert itemList != null;
             assert imageList != null;
             Log.d("check!", "voor adapter");
-            listView.setAdapter(adapter);
+            tableListView.setAdapter(adapter);
 
         }
     }
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             itemList = helper.Read();
-            selectedFromList = (String) listView.getItemAtPosition(position);
+            selectedFromList = (String) tableListView.getItemAtPosition(position);
 
             Log.d("click!", "you clicked"+selectedFromList);
 
@@ -146,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            setList();
+            setDetailList();
         }
     }
 
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
             itemList = helper.Read();
-            selectedFromList = (String) listView.getItemAtPosition(position);
+            selectedFromList = (String) tableListView.getItemAtPosition(position);
 
             Log.d("click!", "you longclicked"+selectedFromList);
 
@@ -164,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                     helper.Delete(items);
                 }
             }
-            setList();
+            setDetailList();
             return true;
         }
     }
