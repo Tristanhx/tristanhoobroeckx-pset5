@@ -15,14 +15,26 @@ import java.util.ArrayList;
 
 public class DataBaseHelper extends SQLiteOpenHelper{
 
+    private static DataBaseHelper instance;
+
     private static final String DATABASE_NAME = "TodoDataBase";
     private static final int DATABASE_VERSION = 1;
     private static final String KEY_ID = "_id";
     private static final String KEY_ITEM = "item";
     private static final String DONE = "done";
-    private static final String TABLE = "";
+    private static final String TABLE = "TODO";
+    private static String USERTABLE = "";
 
-    public DataBaseHelper(Context context){
+
+    public static synchronized DataBaseHelper getInstance(Context context){
+
+        if (instance == null){
+            instance = new DataBaseHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    private DataBaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -40,13 +52,23 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public void Create(ITEM item){
+    public void CreateTable(String tableName){
         SQLiteDatabase db = getWritableDatabase();
+        USERTABLE = tableName;
+        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + USERTABLE + "("
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ITEM
+                + "TEXT NOT NULL," + DONE + "TEXT NOT NULL)";
+        db.execSQL(CREATE_TABLE);
+    }
+
+    public void Create(ITEM item, String currentTable){
+        SQLiteDatabase db = getWritableDatabase();
+        USERTABLE = currentTable;
         //onUpgrade(db, 1, 1);
         ContentValues values = new ContentValues();
         values.put(KEY_ITEM, item.getItem());
         values.put(DONE, item.getDone());
-        db.insert(TABLE, null, values);
+        db.insert(USERTABLE, null, values);
         Log.d("check!", values.get(KEY_ITEM).toString());
         Log.d("check!", values.get(DONE).toString());
         db.close();

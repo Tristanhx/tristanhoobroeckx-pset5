@@ -19,10 +19,12 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> todoList;
     ArrayList<Integer> imageList;
     ITEM item;
-    EditText editText;
+    EditText detailText;
+    EditText tableText;
     ListView tableListView;
-    ListView detailList;
+    ListView detailListView;
     ArrayList<ITEM> itemList;
+    String currentTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Create new database
         context = this;
-        helper = new DataBaseHelper(context);
+        helper = DataBaseHelper.getInstance(context);
 
-        itemList = helper.Read();
+        itemList = helper.Read(currentTable);
         for (ITEM items : itemList){
             Log.d("check!", items.getItem());
             Log.d("check!", items.getDone());
@@ -46,9 +48,10 @@ public class MainActivity extends AppCompatActivity {
         else{
             Log.d("list!", "List is not empty!");
         }
-        editText = (EditText) findViewById(R.id.edittxt);
+        detailText = (EditText) findViewById(R.id.edittxt);
+        tableText = (EditText) findViewById(R.id.edittxt2);
         tableListView = (ListView) findViewById(R.id.list);
-        detailList = (ListView) findViewById(R.id.detailslist);
+        detailListView = (ListView) findViewById(R.id.detailslist);
 
 
 
@@ -58,31 +61,38 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        tableListView.setOnItemClickListener(new ShortClick());
-        tableListView.setOnItemLongClickListener(new LongClick());
+        detailListView.setOnItemClickListener(new ShortClickDetail());
+        detailListView.setOnItemLongClickListener(new LongClickDetail());
 
 
 
     }
 
     public void addDefaultItems(){
-        ITEM item1 = new ITEM("TODO: Type something in the field above", "false");
-        ITEM item2 = new ITEM("TODO: Press TODO", "false");
-        ITEM item3 = new ITEM("TODO: Press shortly on an ITEM to check and uncheck", "false");
-        ITEM item4 = new ITEM("TODO: Press long on an ITEM to Delete", "false");
+        ITEM item1 = new ITEM("Type something in the field above", "false");
+        ITEM item2 = new ITEM("Press TODO", "false");
+        ITEM item3 = new ITEM("Press shortly on an ITEM to check and uncheck", "false");
+        ITEM item4 = new ITEM("Press long on an ITEM to Delete", "false");
 
-        helper.Create(item1);
-        helper.Create(item2);
-        helper.Create(item3);
-        helper.Create(item4);
+        helper.Create(item1, currentTable);
+        helper.Create(item2, currentTable);
+        helper.Create(item3, currentTable);
+        helper.Create(item4, currentTable);
+    }
+
+    public void addTable(){
+        String tablename = tableText.getText().toString();
+        if(!tablename.equals("")){
+            helper.CreateTable(tablename);
+        }
     }
 
     public void addItem(View view){
-        String content = editText.getText().toString();
+        String content = detailText.getText().toString();
         if(!content.equals("")){
             item = new ITEM("TODO: "+content, "false");
-            helper.Create(item);
-            editText.getText().clear();
+            helper.Create(item, currentTable);
+            detailText.getText().clear();
             setDetailList();
         }
         else{
@@ -96,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDetailList(){
-        itemList = helper.Read();
+        itemList = helper.Read(currentTable);
         Log.d("list!", Integer.toString(itemList.size()));
         for (ITEM items : itemList){
             Log.d("list!", items.getItem());
@@ -105,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> strings = makeTodoList(itemList);
 
         if (strings != null){
-            CustomList adapter = new CustomList(MainActivity.this, strings, itemList);
+            CustomDetailList adapter = new CustomDetailList(MainActivity.this, strings, itemList);
             assert itemList != null;
             assert imageList != null;
             Log.d("check!", "voor adapter");
@@ -125,11 +135,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private class ShortClick implements AdapterView.OnItemClickListener {
+    private class ShortClickDetail implements AdapterView.OnItemClickListener {
         String selectedFromList;
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            itemList = helper.Read();
+            itemList = helper.Read(currentTable);
             selectedFromList = (String) tableListView.getItemAtPosition(position);
 
             Log.d("click!", "you clicked"+selectedFromList);
@@ -154,11 +164,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class LongClick implements AdapterView.OnItemLongClickListener{
+    private class LongClickDetail implements AdapterView.OnItemLongClickListener{
         String selectedFromList;
 
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
-            itemList = helper.Read();
+            itemList = helper.Read(currentTable);
             selectedFromList = (String) tableListView.getItemAtPosition(position);
 
             Log.d("click!", "you longclicked"+selectedFromList);

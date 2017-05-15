@@ -15,12 +15,12 @@ import java.util.ArrayList;
  * Created by trist on 5/8/2017.
  */
 
-public class CustomList extends ArrayAdapter<String> {
+public class CustomDetailList extends ArrayAdapter<String> {
     private final Activity context;
     private final ArrayList<String> strings;
     private final ArrayList<ITEM> itemList;
 
-    public CustomList(Activity context, ArrayList<String> strings, ArrayList<ITEM> itemList){
+    public CustomDetailList(Activity context, ArrayList<String> strings, ArrayList<ITEM> itemList){
         super(context, R.layout.list_single, strings);
         Log.d("check!", "ik ben in CustomList");
         this.context = context;
