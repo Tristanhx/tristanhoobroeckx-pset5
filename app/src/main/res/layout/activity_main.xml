@@ -6,12 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.trist.tristanhoobroeckx_pset5.MainActivity">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/edittxt"
-        android:hint="New Category"
-        />
+
 
     <Button
         android:layout_width="wrap_content"
@@ -19,11 +14,13 @@
         android:id="@+id/button"
         android:layout_below="@+id/edittxt"
         android:text="Add Category"
-        android:onClick="addItem"
+        android:onClick="addCategory"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
         />
 
     <ListView
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list"
         android:layout_below="@+id/button"

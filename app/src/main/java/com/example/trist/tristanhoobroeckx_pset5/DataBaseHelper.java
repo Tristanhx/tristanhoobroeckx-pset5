@@ -80,7 +80,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public long CreateTODO(TODO todo, long[] cat_ids){
+    public long CreateTODO(TODO todo, long cat_id){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -90,6 +90,9 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         long todo_id = db.insert(TABLE_DET, null, values);
         Log.d("check!", values.get(KEY_ITEM).toString());
         Log.d("check!", values.get(DONE).toString());
+
+        CreateTODOCAT(todo_id, cat_id);
+
         db.close();
 
         return todo_id;
@@ -131,11 +134,25 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         return todo;
     }
 
+    public CAT ReadCAT(long cat_id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM" + TABLE_CAT + " WHERE " + KEY_ID + " = " + cat_id;
+        Cursor cursor =  db.rawQuery(query, null);
+        if (cursor != null){
+            cursor.moveToFirst();
+        }
+        CAT cat = new CAT();
+        cat.setID(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+        cat.setCATname(cursor.getString(cursor.getColumnIndex(KEY_CAT_NAME)));
+
+        return cat;
+    }
+
     public ArrayList<TODO> ReadAllTODO(){
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<TODO> todos = new ArrayList<>();
-        String query = "SELECT * FROM" + TABLE_DET;
+        String query = "SELECT * FROM " + TABLE_DET;
         Cursor cursor =  db.rawQuery(query, null);
 
         if (cursor.moveToFirst()){
@@ -155,8 +172,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
     public ArrayList<TODO> getAllTODObyCAT(String cat_name){
         ArrayList<TODO> todos = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_DET + " todo, " + TABLE_CAT + " cat, "
-                + TABLE_TODOxCAT + " todo WHERE cat." + KEY_CAT_NAME + " = '" + cat_name + "'"
+        String query = "SELECT  * FROM " + TABLE_DET + " todo, " + TABLE_CAT + " cat, "
+                + TABLE_TODOxCAT + " id WHERE cat." + KEY_CAT_NAME + " = '" + cat_name + "'"
                 + " AND cat." + KEY_ID + " = " + "id." + KEY_CAT_ID + " AND todo." + KEY_ID + " = "
                 + "id." + KEY_TODO_ID;
 
@@ -183,7 +200,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<CAT> cats = new ArrayList<>();
-        String query = "SELECT * FROM" + TABLE_CAT;
+        String query = "SELECT * FROM " + TABLE_CAT;
         Cursor cursor =  db.rawQuery(query, null);
 
         if (cursor.moveToFirst()){

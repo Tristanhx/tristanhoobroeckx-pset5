@@ -1,10 +1,12 @@
 package com.example.trist.tristanhoobroeckx_pset5;
 
+import java.io.Serializable;
+
 /**
  * Created by trist on 5/16/2017.
  */
 
-public class CAT {
+public class CAT implements Serializable{
     int ID;
     String CATname;
 

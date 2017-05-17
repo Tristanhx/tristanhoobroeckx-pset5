@@ -18,9 +18,9 @@ import java.util.ArrayList;
 public class CustomDetailList extends ArrayAdapter<String> {
     private final Activity context;
     private final ArrayList<String> strings;
-    private final ArrayList<ITEM> itemList;
+    private final ArrayList<TODO> itemList;
 
-    public CustomDetailList(Activity context, ArrayList<String> strings, ArrayList<ITEM> itemList){
+    public CustomDetailList(Activity context, ArrayList<String> strings, ArrayList<TODO> itemList){
         super(context, R.layout.list_single, strings);
         Log.d("check!", "ik ben in CustomList");
         this.context = context;
@@ -43,11 +43,11 @@ public class CustomDetailList extends ArrayAdapter<String> {
 //        imageView.setImageResource(imageID.get(position));
 
 
-            if (itemList.get(position).getDone().equals("false")){
+            if (itemList.get(position).getStatus() == 0){
                 imageView.setImageResource(R.drawable.unchecked);
                 Log.d("list!", "unchecked");
             }
-            if (itemList.get(position).getDone().equals("true")){
+            if (itemList.get(position).getStatus() == 1){
                 imageView.setImageResource(R.drawable.checked);
                 Log.d("list!", "checked");
             }

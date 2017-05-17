@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         helper = DataBaseHelper.getInstance(context);
 
-        tableText = (EditText) findViewById(R.id.edittxt2);
+
         CategoryListView = (ListView) findViewById(R.id.list);
 
         setCategoryList();
@@ -63,16 +63,10 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void addCategory(View view){
-        String content = tableText.getText().toString();
-        if(!content.equals("")){
-            cat = new CAT(content);
-            helper.CreateCAT(cat);
-            tableText.getText().clear();
-            setCategoryList();
-        }
-        else{
-            Toast.makeText(this, "What did you need to do?", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(context, AddActivity.class);
+        context.startActivity(intent);
+
+        setCategoryList();
 
     }
 
@@ -81,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> strings = makeCategoryList(CategoryList);
 
         if (CategoryList != null){
-            CustomCategoryList adapter = new CustomCategoryList(context, strings, CategoryListView);
+            CustomCategoryList adapter = new CustomCategoryList(MainActivity.this, strings);
             assert CategoryList != null;
             Log.d("check!", "voor adapter");
             CategoryListView.setAdapter(adapter);
@@ -109,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
 
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra("selected", selectedFromList);
+            for (CAT cats : CategoryList){
+                if (cats.getCATname().equals(selectedFromList)){
+                    intent.putExtra("cat_object", cats);
+                }
+            }
             context.startActivity(intent);
 
             Log.d("click!", "you clicked"+selectedFromList);
@@ -128,12 +127,10 @@ public class MainActivity extends AppCompatActivity {
 
             for (CAT cats : CategoryList){
                 if (cats.getCATname().equals(selectedFromList)){
-                    CAT cat = new CAT;
-                    cat = helper.R
-                    helper.DeleteCATandTODOs(items);
+                    helper.DeleteCATandTODOs(cats);
                 }
             }
-            setDetailList();
+            setCategoryList();
             return true;
         }
     }

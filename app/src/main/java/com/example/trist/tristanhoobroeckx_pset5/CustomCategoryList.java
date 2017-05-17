@@ -18,14 +18,12 @@ import java.util.ArrayList;
 public class CustomCategoryList extends ArrayAdapter<String> {
     private final Activity context;
     private final ArrayList<String> strings;
-    private final ArrayList<CAT> itemList;
 
-    public CustomCategoryList(Activity context, ArrayList<String> strings, ArrayList<CAT> itemList){
+    public CustomCategoryList(Activity context, ArrayList<String> strings){
         super(context, R.layout.list_single, strings);
         Log.d("check!", "ik ben in CustomList");
         this.context = context;
         this.strings = strings;
-        this.itemList = itemList;
     }
 
     @Override
