@@ -41,7 +41,7 @@ public class CustomDetailList extends ArrayAdapter<String> {
         txtTitle.setText(strings.get(position));
 
 //        imageView.setImageResource(imageID.get(position));
-
+        Log.d("lista", Integer.toString(itemList.get(position).getStatus()));
 
             if (itemList.get(position).getStatus() == 0){
                 imageView.setImageResource(R.drawable.unchecked);

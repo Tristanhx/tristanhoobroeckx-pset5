@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -43,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        CategoryListView.setOnItemClickListener(new ShortClickDetail());
-        CategoryListView.setOnItemLongClickListener(new LongClickDetail());
+        CategoryListView.setOnItemClickListener(new ShortClickCategory());
+        CategoryListView.setOnItemLongClickListener(new LongClickCategory());
 
 
 
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private class ShortClickDetail implements AdapterView.OnItemClickListener {
+    private class ShortClickCategory implements AdapterView.OnItemClickListener {
         String selectedFromList;
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -116,17 +114,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class LongClickDetail implements AdapterView.OnItemLongClickListener{
+    private class LongClickCategory implements AdapterView.OnItemLongClickListener{
         String selectedFromList;
 
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
             CategoryList = helper.ReadAllCAT();
             selectedFromList = (String) CategoryListView.getItemAtPosition(position);
 
-            Log.d("click!", "you longclicked"+selectedFromList);
+            Log.d("click!", "you longclicked "+selectedFromList);
 
             for (CAT cats : CategoryList){
                 if (cats.getCATname().equals(selectedFromList)){
+                    helper.DeleteTODOCAT(cats.getID());
                     helper.DeleteCATandTODOs(cats);
                 }
             }

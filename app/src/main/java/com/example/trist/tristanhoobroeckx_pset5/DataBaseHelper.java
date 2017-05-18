@@ -42,15 +42,15 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     // CREATE TABLE STATEMENTS
     // TODO_TABLE
     private static final String CREATE_TABLE_TODO = "CREATE TABLE " + TABLE_DET + "(" + KEY_ID
-            + " INTEGER PRIMARY KEY," + KEY_ITEM + " TEXT," + DONE + " INTEGER)";
+            + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ITEM + " TEXT," + DONE + " INTEGER)";
 
     // CAT TABLE
     private static final String CREATE_TABLE_CAT = "CREATE TABLE " + TABLE_CAT + "(" + KEY_ID
-            + " INTEGER PRIMARY KEY," + KEY_CAT_NAME + " TEXT," + DONE + " INTEGER)";
+            + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_CAT_NAME + " TEXT," + DONE + " INTEGER)";
 
     // CATxTODO
     private static final String CREATE_TABLE_TODOxCAT = "CREATE TABLE " + TABLE_TODOxCAT + "("
-            + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TODO_ID + " INTEGER," + KEY_CAT_ID
+            + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_TODO_ID + " INTEGER," + KEY_CAT_ID
             + " INTEGER)";
 
 
@@ -88,12 +88,10 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         values.put(DONE, todo.getStatus());
 
         long todo_id = db.insert(TABLE_DET, null, values);
-        Log.d("check!", values.get(KEY_ITEM).toString());
-        Log.d("check!", values.get(DONE).toString());
+        Log.d("create", values.get(KEY_ITEM).toString());
+        Log.d("create", values.get(DONE).toString());
 
         CreateTODOCAT(todo_id, cat_id);
-
-        db.close();
 
         return todo_id;
     }
@@ -105,7 +103,6 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         values.put(KEY_CAT_NAME, cat.getCATname());
 
         long CAT_id = db.insert(TABLE_CAT, null, values);
-        db.close();
 
         return CAT_id;
     }
@@ -166,7 +163,6 @@ public class DataBaseHelper extends SQLiteOpenHelper{
             }while(cursor.moveToNext());
         }
         cursor.close();
-        db.close();
         return todos;
     }
 
@@ -185,14 +181,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
                 TODO todo = new TODO();
                 todo.setID(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 todo.setNote(cursor.getString(cursor.getColumnIndex(KEY_ITEM)));
-
+                Log.d("hier", "gelezen!");
                 todos.add(todo);
 
             }while(cursor.moveToNext());
         }
         cursor.close();
-        db.close();
-
         return todos;
     }
 
@@ -214,17 +208,30 @@ public class DataBaseHelper extends SQLiteOpenHelper{
             }while(cursor.moveToNext());
         }
         cursor.close();
-        db.close();
         return cats;
     }
 
-    public int Update(ITEM item){
+    public int Update(TODO todo){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_ITEM, item.getItem());
-        values.put(DONE, item.getDone());
+        //values.put(KEY_ITEM, odo.getNote());
+        values.put(DONE, todo.getStatus());
+        Log.d("hiero", Integer.toString(todo.getStatus()));
+        Log.d("compare", Long.toString(todo.getID()));
 
-        return db.update(TABLE_CAT, values, KEY_ID + " = ? ", new String[] {String.valueOf(item.getID())});
+        String query = "UPDATE " + TABLE_DET + " SET " + DONE + " = " + todo.getStatus() + " WHERE "
+                + KEY_ID + " = " + todo.getID() + ";";
+
+        //return db.update(TABLE_DET, values, KEY_ID + " = ?", new String[] {String.valueOf(todo.getID())});
+        db.rawQuery(query, null);
+        return -1;
+    }
+
+
+    public void DeleteTODOCAT(long id){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TODOxCAT, KEY_ID + " = ?", new String[]{String.valueOf(id)});
+
     }
 
     public void DeleteTODO(long todo_id){
@@ -239,6 +246,5 @@ public class DataBaseHelper extends SQLiteOpenHelper{
             DeleteTODO(todo.getID());
         }
         db.delete(TABLE_CAT, " " + KEY_ID + " = ? ", new String[] {String.valueOf(cat.getID())});
-        db.close();
     }
 }

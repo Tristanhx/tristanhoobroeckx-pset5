@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +40,9 @@ public class DetailActivity extends AppCompatActivity {
         detailListView = (ListView) findViewById(R.id.detailslist);
         title = (TextView) findViewById(R.id.title);
 
+        detailListView.setOnItemClickListener(new DetailActivity.ShortClickDetail());
+        detailListView.setOnItemLongClickListener(new DetailActivity.LongClickDetail());
+
         Bundle extras = getIntent().getExtras();
         cat_name = extras.getSerializable("selected").toString();
         catobject = (CAT) extras.getSerializable("cat_object");
@@ -53,6 +57,7 @@ public class DetailActivity extends AppCompatActivity {
             helper.CreateTODO(todo, catobject.getID());
             detailText.getText().clear();
             setDetailList(cat_name);
+            Log.d("hier", "aangeroepen");
 
         }
         else{
@@ -63,29 +68,81 @@ public class DetailActivity extends AppCompatActivity {
 
     public void setDetailList(String cat_name){
         itemList = helper.getAllTODObyCAT(cat_name);
-        Log.d("list!", Integer.toString(itemList.size()));
+        Log.d("gogo", Integer.toString(itemList.size()));
         for (TODO todo : itemList){
-            Log.d("list!", todo.getNote());
+            Log.d("gogo", todo.getNote());
+            Log.d("gogo", Integer.toString(todo.getStatus()));
         }
         ArrayList<String> strings = makeTodoList(itemList);
 
         if (strings != null){
-            CustomDetailList adapter = new CustomDetailList(MainActivity.this, strings, itemList);
+            CustomDetailList adapter = new CustomDetailList(DetailActivity.this, strings, itemList);
             assert itemList != null;
             assert imageList != null;
             Log.d("check!", "voor adapter");
-            tableListView.setAdapter(adapter);
+            detailListView.setAdapter(adapter);
 
         }
     }
 
     public ArrayList<String> makeTodoList(ArrayList<TODO> TODOList){
         todoList = new ArrayList<>();
-        for (CAT cats : CATList){
-            todoList.add(cats.getCATname());
+        for (TODO todo : TODOList){
+            todoList.add(todo.getNote());
         }
         Log.d("check!", todoList.toString());
         return todoList;
+    }
+
+    private class ShortClickDetail implements AdapterView.OnItemClickListener {
+        String selectedFromList;
+
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            itemList = helper.getAllTODObyCAT(cat_name);
+            selectedFromList = (String) detailListView.getItemAtPosition(position);
+
+            Log.d("click!", "you clicked "+selectedFromList);
+
+            for (TODO todos : itemList){
+                if (todos.getNote().equals(selectedFromList)){
+                    if (todos.getStatus() == 0){
+                        todos.setStatus(1);
+                        Log.d("lista!", "This was false");
+                        Log.d("compare", Long.toString(todos.getID()));
+                        int i = helper.Update(todos);
+                        Log.d("return", Integer.toString(i));
+                        break;
+                    }
+                    else if (todos.getStatus() == 1){
+                        todos.setStatus(0);
+                        Log.d("lista!", "This was true");
+                        helper.Update(todos);
+                        break;
+                    }
+                }
+            }
+            setDetailList(cat_name);
+        }
+    }
+
+    private class LongClickDetail implements AdapterView.OnItemLongClickListener{
+        String selectedFromList;
+
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+            itemList = helper.getAllTODObyCAT(cat_name);
+            selectedFromList = (String) detailListView.getItemAtPosition(position);
+
+            Log.d("click!", "you longclicked"+selectedFromList);
+
+            for (TODO todos : itemList){
+                if (todos.getNote().equals(selectedFromList)){
+                    helper.DeleteTODOCAT(todos.getID());
+                    helper.DeleteTODO(todos.getID());
+                }
+            }
+            setDetailList(cat_name);
+            return true;
+        }
     }
 
     public void ReturnToMain(View view){
