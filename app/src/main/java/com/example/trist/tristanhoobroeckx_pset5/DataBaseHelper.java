@@ -181,6 +181,11 @@ public class DataBaseHelper extends SQLiteOpenHelper{
                 TODO todo = new TODO();
                 todo.setID(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 todo.setNote(cursor.getString(cursor.getColumnIndex(KEY_ITEM)));
+
+                int test = cursor.getInt(cursor.getColumnIndex((DONE)));
+
+                todo.setStatus(test);
+                Log.d("wanhoopspoging 10", Integer.toString(test));
                 Log.d("hier", "gelezen!");
                 todos.add(todo);
 
@@ -219,12 +224,24 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         Log.d("hiero", Integer.toString(todo.getStatus()));
         Log.d("compare", Long.toString(todo.getID()));
 
-        String query = "UPDATE " + TABLE_DET + " SET " + DONE + " = " + todo.getStatus() + " WHERE "
-                + KEY_ID + " = " + todo.getID() + ";";
+//        String query = "UPDATE " + TABLE_DET + " SET " + DONE + " = " + todo.getStatus() + " WHERE "
+//                + KEY_ID + " = " + todo.getID() + ";";
 
-        //return db.update(TABLE_DET, values, KEY_ID + " = ?", new String[] {String.valueOf(todo.getID())});
-        db.rawQuery(query, null);
-        return -1;
+//        String query2 = "SELECT " + DONE +" FROM " + TABLE_DET + ";";
+
+        return db.update(TABLE_DET, values, KEY_ID + " = ?", new String[] {String.valueOf(todo.getID())});
+//        db.rawQuery(query, null);
+
+//        Cursor cursor = db.rawQuery(query2, null);
+//        if (cursor.moveToFirst()){
+//            do{
+//                Log.d("cursor", Integer.toString(cursor.getInt(cursor.getColumnIndex(DONE))));
+//
+//            }while(cursor.moveToNext());
+//        }
+//        cursor.close();
+//        db.close();
+//        return -1;
     }
 
 

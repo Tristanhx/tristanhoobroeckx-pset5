@@ -110,10 +110,10 @@ public class DetailActivity extends AppCompatActivity {
                         Log.d("lista!", "This was false");
                         Log.d("compare", Long.toString(todos.getID()));
                         int i = helper.Update(todos);
-                        Log.d("return", Integer.toString(i));
+                        Log.d("gogo", Integer.toString(i));
                         break;
                     }
-                    else if (todos.getStatus() == 1){
+                    if (todos.getStatus() == 1){
                         todos.setStatus(0);
                         Log.d("lista!", "This was true");
                         helper.Update(todos);
